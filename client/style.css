@@ -1,0 +1,31 @@
+:root{
+    --color-win:#6CB46C;
+    --color-lose:#DC5B49;
+    --background-boton:#006CFC;
+    --color-border-boton: #001997;
+    --color-text-boton:#D8FCFC;
+    --background-win:#888949E5;
+    --background-lose:#894949E5;
+    --color-title:#009048;
+    
+}
+*{
+    box-sizing: border-box;
+
+}
+html, body {
+  overflow-y: hidden;
+  height: 100%; /* Asegura que el contenedor no supere la pantalla */
+}
+body{
+    margin:0 auto;
+    font-family: "Odibee Sans", sans-serif;
+
+}
+
+
+
+
+
+/* step-1 */
+

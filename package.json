@@ -6,7 +6,7 @@
     "dev:front": "parcel serve ./client/index.html",
     "dev:api": "tsx --watch ./server/index.ts",
     "build:front": "parcel build ./client/index.html",
-    "build:api": "tsc ./server/index.ts ./server/index.js",
+    "build:api": "tsc ",
     "build": "pnpm build:front && pnpm build:api",
     "start": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

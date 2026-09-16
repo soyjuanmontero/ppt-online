@@ -11,6 +11,12 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      nanoid:
+        specifier: ^6.0.1
+        version: 6.0.1
+      uuid:
+        specifier: ^14.0.2
+        version: 14.0.2
     devDependencies:
       '@types/express':
         specifier: ^5.0.6
@@ -1352,6 +1358,11 @@ packages:
   msgpackr@1.12.1:
     resolution: {integrity: sha512-4EUH9tQHnMmEgzW/MdAP0KIfa1T9AF+htl0ffe2n5vb2EKn9y2co8ccpgWko6S52Jy1PQZKwRnx5/KkYjtd9MQ==}
 
+  nanoid@6.0.1:
+    resolution: {integrity: sha512-3wVS3i51pE2pi1k5FFL/95BGfVS0kSsvDVuGXHOtxox/TywUmtgq+3qiTOTbs9J7KfHaXPiN171k/A6dBnaXFw==}
+    engines: {node: ^22 || ^24 || >=26}
+    hasBin: true
+
   negotiator@1.1.0:
     resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
     engines: {node: '>=18'}
@@ -1655,6 +1666,10 @@ packages:
   utility-types@3.11.0:
     resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
     engines: {node: '>= 4'}
+
+  uuid@14.0.2:
+    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
+    hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
@@ -3473,6 +3488,8 @@ snapshots:
     optionalDependencies:
       msgpackr-extract: 3.0.4
 
+  nanoid@6.0.1: {}
+
   negotiator@1.1.0:
     dependencies:
       content-type: 2.1.0
@@ -3839,6 +3856,8 @@ snapshots:
     optional: true
 
   utility-types@3.11.0: {}
+
+  uuid@14.0.2: {}
 
   uuid@9.0.1:
     optional: true

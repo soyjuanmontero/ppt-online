@@ -18,8 +18,8 @@ app.use(express.json());
 const frontendDistPath = path.resolve(__dirname, "../dist");
 app.use(express.static(frontendDistPath));
 
-// app.use('/users', userRouter)
-// app.use('/chatRoom',chatsRouter)
+app.use('/users', userRouter)
+app.use('/chatRoom',chatsRouter)
 
 
 

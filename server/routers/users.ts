@@ -9,7 +9,7 @@ const router=express.Router()
 const userCollections=dbFirestore.collection('users')
 const roomsCollections=dbFirestore.collection("rooms")
 
-console.log(dbFirestore)
+
 
 router.post("/",async(req,res)=>{
     try{

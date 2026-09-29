@@ -16,17 +16,17 @@ router.post("/",async(req,res)=>{
 
 
         const {userName}=req.body
-        const id =uuidv4()
+        const userId =uuidv4()
         if(!userName){
          return res.status(400).json({ message: "El campo Nombre es obligatorio" });
         }
-       await userCollections.doc(id).set({
+       await userCollections.doc(userId).set({
         userName
        })
        return res.status(201).json({
         message:"usuario creado correctamente",
-        userName,
-        id
+        
+        userId
        })
     }
     catch (error:any) {

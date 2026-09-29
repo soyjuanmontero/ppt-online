@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev:front": "parcel serve ./client/index.html",
+    "dev:front": " parcel serve ./client/index.html",
     "dev:api": "tsx --watch ./server/index.ts",
     "build:front": "parcel build ./client/index.html",
     "build:api": "tsc ",
@@ -16,14 +16,26 @@
   "license": "ISC",
   "packageManager": "pnpm@10.12.1",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^22.20.2",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
     "dotenv": "^17.4.2",
+    "events": "^3.3.0",
     "firebase-admin": "^14.4.0",
-    "parcel": "^2.16.4"
+    "os-browserify": "^0.3.0",
+    "parcel": "^2.16.4",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "string_decoder": "^1.3.0",
+    "vm-browserify": "^1.1.2"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "express": "^5.2.1",
+    "firebase": "^12.19.0",
     "nanoid": "^6.0.1",
     "uuid": "^14.0.2"
   }

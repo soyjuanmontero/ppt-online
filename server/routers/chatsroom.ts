@@ -1,10 +1,7 @@
 import express from 'express'
 import { dbRealtime, dbFirestore } from '../db'
 import { nanoid ,customAlphabet,} from "nanoid";
-import { stringify } from 'querystring';
-import { read } from 'fs';
 
-// import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -17,8 +14,11 @@ const roomsRef=dbRealtime.ref('rooms')
 
 
 router.post("/:userId",async (req,res)=>{
+    
     try{
         const {userId}=req.params
+        const {userName}=req.body
+        
 
               const userSnapShot= await userCollections.doc(userId).get()
  if(!userSnapShot.exists){
@@ -41,6 +41,7 @@ router.post("/:userId",async (req,res)=>{
 
             users:{
                 [userId]:{
+                    userName,
                     online:true,
                     ready:false
 
@@ -53,7 +54,8 @@ router.post("/:userId",async (req,res)=>{
          })
           return res.status(201).json({
         message:"La sala a sido creada correctamente",
-        roomShortId
+        roomShortId,
+        roomLongId
         
        })
 
@@ -70,10 +72,10 @@ router.post("/:userId",async (req,res)=>{
     }
     
 })
-router.get("/:roomId", async (req,res)=>{
+router.get("/:roomShortId", async (req,res)=>{
     try{
   
-    const roomShortId=req.params.roomId
+    const {roomShortId}=req.params
    
 
     const roomSnapShot= await roomsCollections.doc(roomShortId).get()
@@ -95,10 +97,10 @@ router.get("/:roomId", async (req,res)=>{
    
 
 })
-router.post("/:userId/join",async(req,res)=>{
+router.put("/:userId/join",async(req,res)=>{
     try{
         const {userId}=req.params
-    const {roomLongId}=req.body
+    const {roomLongId,userName}=req.body
 
     if (!roomLongId) {
             return res.status(400).json({ message: "Faltan datos requeridos (roomLongId)" });
@@ -130,6 +132,7 @@ router.post("/:userId/join",async(req,res)=>{
    await newRoomRef.update({
         playerCount:playerCount,
             [`users/${userId}`]:{
+                userName,
             online:true,
             ready:false
         }
@@ -189,6 +192,9 @@ router.put("/:userId/start", async (req,res)=>{
       await userRef.update({
            ready:true
        })
+         return res.status(200).json({ 
+               message:"El usuario esta listo para jugar"
+            });
        
     }
     return res.status(400).json({ message: "El usuario ya está listo y no puede unirse nuevamente." });
@@ -257,7 +263,7 @@ router.put("/:userId/choice", async (req,res)=>{
 router.put("/:roomLongId/history", async (req,res)=>{
     try{
         
-        const {history}=req.body
+        const {winnerId}=req.body as {winnerId:string}
             const {roomLongId}=req.params
             const currentRoomRef=roomsRef.child(roomLongId)
              const currentRoomSnaphopt= await currentRoomRef.get()
@@ -266,15 +272,50 @@ router.put("/:roomLongId/history", async (req,res)=>{
         message:"error la sala no existe"
     })
  }
+    if (!winnerId) {
+            return res.status(400).json({ message: "Faltan datos requeridos (winnerId)" });
+        }
+
+const {users}=currentRoomSnaphopt.val()
+const keyUsers=Object.keys(users)
+
+
+const updateHistory=(winnerId:string,obj:any)=>{
+  
+    if(obj[winnerId]|| obj[winnerId]===0){
+
+        obj[winnerId]+=1
+        console.log(obj)
+    }
+        
+    }
+  const {history}=currentRoomSnaphopt.val()
 
 
   
- await currentRoomRef.update({
-          history:history
-       })
-        return res.status(200).json({ 
-                  message:"ok"
-               });
+  
+  if(!history){
+      const newHistory=Object.fromEntries(keyUsers.map(value=>[value,0]))
+      
+    updateHistory(winnerId,newHistory)
+    
+       await currentRoomRef.update({
+                history:newHistory
+             })
+              return res.status(200).json({ 
+                        message:"ok"
+                     });
+
+  }
+    updateHistory(winnerId,history)
+    
+       await currentRoomRef.update({
+                history:history
+             })
+              return res.status(200).json({ 
+                        message:"ok"
+                     });
+  
 
   
 

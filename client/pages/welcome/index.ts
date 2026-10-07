@@ -1,5 +1,6 @@
 import { Params } from "../../interfaces"
 
+
 export function initPageWelcome(params:Params){
 
     const div=document.createElement('div')
@@ -12,7 +13,7 @@ export function initPageWelcome(params:Params){
     
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    
 width: 375px;
     margin: 0 auto;
     
@@ -23,7 +24,10 @@ width: 375px;
     
 }
     .welcome-title{
-    width: 288px;
+    width: 308px;
+    padding:53px 0 39px;
+
+   
   
   
     
@@ -36,7 +40,7 @@ width: 375px;
         text-align: center;
         font-size: 80px;
         font-weight: 700;
-        
+        line-height: 0.91;
     margin: 0;
     color: var(--color-title);
 
@@ -44,8 +48,14 @@ width: 375px;
 .welcome-button{
 margin: 0 auto;
     width: 322px;
+   margin-bottom:39px
 }
-    
+    .container-new{
+    margin-bottom:20px}
+
+
+
+   
     `
     
     
@@ -61,7 +71,15 @@ margin: 0 auto;
         </h1>
         </div>
         <div class="welcome-button">
-        <button-primary textContent="Empezar" id="button-welcome"></button-primary> 
+        <div class="container-new">
+        
+        <button-primary  class="new">Nuevo juego</button-primary>
+        </div>
+        <div class="container-join">
+        
+        <button-primary  class="join">Ingresar a una sala</button-primary>
+        </div>
+
         </div>
 
 
@@ -69,13 +87,30 @@ margin: 0 auto;
         
     
     `
-    const button=div.querySelector("#button-welcome")
-    button?.addEventListener("click",(e)=>{
+//   
+    const buttonNewEl=div.querySelector(".new")
+    const buttonJoinEl=div.querySelector(".join")
+    if(buttonNewEl){
+        
+    
+
+    
+    buttonNewEl.addEventListener("click",(e)=>{
         e.preventDefault()
-        params.goTo("/step-1")
+        params.goTo("/create")
       
 
     })
+}
+ if(buttonJoinEl){
+        
+    buttonJoinEl.addEventListener("click",(e)=>{
+        e.preventDefault()
+        params.goTo("/join")
+      
+
+    })
+}
     div.appendChild(style)
 
     return {element:div}

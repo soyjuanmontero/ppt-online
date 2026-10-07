@@ -1,6 +1,7 @@
 import {  ref, onValue, push } from "firebase/database";
 import { db } from "./db";
 import { BlobOptions } from "buffer";
+import { promises } from "dns";
 
 
 const API_BASE_URL = process.env.PUBLIC_API_URL
@@ -9,7 +10,7 @@ interface User{
     userId:string,
     choice?:Reglas
     online?:boolean,
-    ready?:boolean
+    ready:boolean
 }
 interface Room{
   roomShortId?:string,
@@ -43,7 +44,10 @@ createRoom():Promise<object>,
 getAndSaveRoomLongId():Promise<object>
 joinTheRoom():Promise<object>,
 listenToTheRoom():any,
-updatePlayer(player: Partial<User> & { userId: string }) :void
+updatePlayer(users: Record<string, User>) :void,
+readytoPlay():Promise<object>
+choseAMove(choice:Reglas):Promise<object>
+bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
 }
 
 type Reglas="piedra"| "papel" |"tijera"
@@ -61,12 +65,14 @@ const defaultData: Data = {
     localPlayer:{
         userName:"",
         userId:"",
+        ready:false
         
 
         
     },remotePlayer:{
         userName:"",
         userId:"",
+        ready:false
        
     },playersReadyToGame:false,
     room:{
@@ -185,7 +191,8 @@ const state:State={
       this.setState({
         localPlayer:{
           userId,
-          userName
+          userName,
+          ready:false
         }
       })
       return {succes:true, message}
@@ -294,20 +301,19 @@ const unsubscribe = onValue(roomRef, (snapshot) => {
   const data = snapshot.val();
   const { users } = data;
   
+ 
   
   
   if (!snapshot.exists()) {
      return {message:"No hay datos en esta ruta."}
   } 
-    Object.entries(users as Record<string, User>).forEach(([userId,userData])=>{
-      
-      this.updatePlayer({
-        ...userData,
-        userId
-      })
     
       
-    })
+      this.updatePlayer(users)
+      return {message:"ok"}
+    
+      
+    
   
 }, (error) => {
   console.error("Error al leer los datos:", error);
@@ -344,7 +350,7 @@ return unsubscribe
       if (!res.ok) {
           return{message}
       }
-      this.listenToTheRoom()
+      
     return {succes:true, message:resultado.message}
     
     
@@ -355,30 +361,106 @@ return unsubscribe
 
 
     },
-    updatePlayer(player: Partial<User> & { userId: string }) {
+    updatePlayer(users: Record<string, User>) {
+      console.log("update")
   const state = this.getState();
-  // console.log(state)
-  // console.log(player.userId)
-  // console.log(state.localPlayer)
+let localPlayer = state.localPlayer;
+  let remotePlayer = state.remotePlayer;
 
-  if (player.userId === state.localPlayer.userId) {
-    
+  Object.entries(users).forEach(([userId, userData]) => {
+    const player = { ...userData, userId };
+
+    if (userId === localPlayer.userId) {
+      localPlayer = { ...localPlayer, ...player };
+    } else {
+      remotePlayer = { ...remotePlayer, ...player };
+    }
+  });
+const playersReadyToGame = this.bothPlayersReady(localPlayer, remotePlayer);
+  this.setState({
+    localPlayer,
+    remotePlayer,
+    playersReadyToGame
+  });
+  
+},
+async readytoPlay(){
+
+   try {
+              const currentState=this.getState()
+              const {userId}=currentState.localPlayer
+              const {roomLongId}=currentState.room
+                if(!userId&&!roomLongId){
+                    return {message:"faltan datos (userId,roomLongId)"}
+                }
+       
+    const res = await fetch(`${API_BASE_URL}/chatRoom/${userId}/start`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        roomLongId
+      }) 
+    });
+
    
-    this.setState({
-      localPlayer: {
-        ...state.localPlayer,
-        ...player
-      }
-    });
-  } else {
-    this.setState({
-      remotePlayer: {
-        ...state.remotePlayer,
-        ...player
-      }
-    });
-  }
-}
 
+    const resultado = await res.json();
+     const {message}=resultado
+      if (!res.ok) {
+          return{message}
+      }
+      
+    return {succes:true, message}
+    
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return { error}
+  }
+
+},
+async choseAMove(choice){
+   try {
+              const currentState=this.getState()
+              const {userId}=currentState.localPlayer
+              const {roomLongId}=currentState.room
+                if(!userId&&!roomLongId&& !choice){
+                    return {message:"faltan datos (userId,roomLongId,choice)"}
+                }
+       
+    const res = await fetch(`${API_BASE_URL}/chatRoom/${userId}/choice`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        roomLongId,
+        choice
+      }) 
+    });
+
+   
+
+    const resultado = await res.json();
+     const {message}=resultado
+      if (!res.ok) {
+          return{message}
+      }
+      
+    return {succes:true, message}
+    
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return { error}
+  }
+
+},
+bothPlayersReady(localPlayer: User, remotePlayer: User): boolean {
+  
+  return localPlayer.ready && remotePlayer.ready;
+}
 }
 export {state}

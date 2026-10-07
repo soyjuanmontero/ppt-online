@@ -1,5 +1,3 @@
-
-
 export function initComponentButton(){
 class Button extends HTMLElement{
     constructor(){
@@ -7,18 +5,20 @@ class Button extends HTMLElement{
 
     }
     shadow=this.attachShadow({mode:"open"})
+          button=document.createElement("button")
+         styleElement=document.createElement("style")
     connectedCallback(){
         this.render()
 
     }
     render(){
         
-        const div=document.createElement("div")
-        const style=document.createElement("style")
-        const textContent=this.getAttribute("textContent")
+   
+         this.button.textContent=this.textContent
+         this.button.className="button-primary"
         
     
-        style.innerHTML=`
+        this.styleElement.innerHTML=`
         
    
         .button-primary{
@@ -36,14 +36,17 @@ class Button extends HTMLElement{
 
         `
 
-      
-        div.innerHTML=` 
+this.button.addEventListener("click", () => {
+   const event = new CustomEvent("button-click", {
+  bubbles: true
+});
+this.dispatchEvent(event)
+
+  });
+
         
-      <button class="button-primary">${textContent}</button>
-         
-        `
-        this.shadow.appendChild(div)
-        this.shadow.appendChild(style)
+        this.shadow.appendChild(this.button)
+        this.shadow.appendChild(this.styleElement)
     }
 }
 customElements.define("button-primary", Button)

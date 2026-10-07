@@ -6,10 +6,64 @@ import { nanoid ,customAlphabet,} from "nanoid";
 
 
 
+
 const router=express.Router()
 const userCollections=dbFirestore.collection('users')
 const roomsCollections=dbFirestore.collection("rooms")
 const roomsRef=dbRealtime.ref('rooms')
+
+type Reglas="piedra"| "papel" |"tijera"
+interface user{
+    name:string,
+    choice:Reglas,
+    online:boolean,
+    ready:boolean,
+
+}
+
+const reglas={
+    piedra:"tijera",
+    papel:"piedra",
+    tijera:"papel"
+}
+
+const whoWins=(player1:[string,user],player2:[string,user]):string=>{
+    const userIdPlayer1:string=player1[0]
+    const dataPlayer1:user=player1[1]
+     const userIdPlayer2:string=player2[0]
+    const dataPlayer2:user=player2[1]
+    const choicePlayer1:Reglas=dataPlayer1.choice
+   
+    
+   
+
+        if(dataPlayer1.choice===dataPlayer2.choice){
+            
+            return "draw"
+        }
+        else if(reglas[choicePlayer1]===dataPlayer2.choice){
+           
+
+           
+            return userIdPlayer1
+        }
+        else{
+           
+            return userIdPlayer2
+        }
+
+
+    }
+    const updateHistory=(winnerId:string,obj:any)=>{
+    console.log(obj[winnerId])
+  
+    if(obj[winnerId]|| obj[winnerId]===0){
+
+        obj[winnerId]+=1
+       
+    }
+        
+    }
 
 
 
@@ -239,7 +293,7 @@ router.put("/:userId/choice", async (req,res)=>{
 }
 
       await userRef.update({
-           ready:false,
+           
            choice
        })
         return res.status(200).json({ 
@@ -263,39 +317,58 @@ router.put("/:userId/choice", async (req,res)=>{
 router.put("/:roomLongId/history", async (req,res)=>{
     try{
         
-        const {winnerId}=req.body as {winnerId:string}
+       
             const {roomLongId}=req.params
             const currentRoomRef=roomsRef.child(roomLongId)
              const currentRoomSnaphopt= await currentRoomRef.get()
- if(!currentRoomSnaphopt.val()){
+             const dataRoom=currentRoomSnaphopt.val()
+        if(!dataRoom){
     return res.status(404).json({
         message:"error la sala no existe"
     })
  }
-    if (!winnerId) {
-            return res.status(400).json({ message: "Faltan datos requeridos (winnerId)" });
-        }
-
-const {users}=currentRoomSnaphopt.val()
-const keyUsers=Object.keys(users)
-
-
-const updateHistory=(winnerId:string,obj:any)=>{
-  
-    if(obj[winnerId]|| obj[winnerId]===0){
-
-        obj[winnerId]+=1
-        console.log(obj)
-    }
+    
+        const {users}=dataRoom
         
-    }
+        
+        if(!users){
+             return res.status(400).json({ message: "Error no hay usuarios en la sala " });
+        }
+        const keyUsers=Object.keys(users)
+
+const players=Object.entries(users as Record<string, any>)
+
+const verifyData=players.every(([userId,data ])=>{
+    return data.choice!==undefined && data.ready===true && data.online===true
+
+})
+
+
+if(!verifyData){
+     return res.status(400).json({ message: "error no se puede realizar esta operacion" });
+}
+const [player1 , player2]=players
+const winnerId=whoWins(player1,player2)
+
+
+
+
+
   const {history}=currentRoomSnaphopt.val()
 
 
   
   
   if(!history){
-      const newHistory=Object.fromEntries(keyUsers.map(value=>[value,0]))
+    
+    const userIdPlayer1=player1[0]
+    const userIdPlayer2=player2[0]
+      const newHistory={
+        [userIdPlayer1]:0,
+        [userIdPlayer2]:0
+
+      }
+      
       
     updateHistory(winnerId,newHistory)
     
@@ -303,7 +376,8 @@ const updateHistory=(winnerId:string,obj:any)=>{
                 history:newHistory
              })
               return res.status(200).json({ 
-                        message:"ok"
+                        message:"ok",
+                        
                      });
 
   }
@@ -313,7 +387,8 @@ const updateHistory=(winnerId:string,obj:any)=>{
                 history:history
              })
               return res.status(200).json({ 
-                        message:"ok"
+                        message:"ok",
+                        
                      });
   
 

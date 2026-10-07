@@ -1,9 +1,12 @@
 
 import { initPageWelcome } from "./pages/welcome";
+import {initPageCreate} from "./pages/create"
+import {initPageJoin} from "./pages/join"
 import { initPageStepUno } from "./pages/step-1";
 import { initPagePlay } from "./pages/play";
 import { initpageMove } from "./pages/move";
 import { initPageResult } from "./pages/result";
+
 
 type RouterPath = {
   pathRegex: RegExp;
@@ -17,7 +20,15 @@ const routes: RouterPath[] = [
   {
     pathRegex: /^\/$/,
     render: ({ goTo }) => initPageWelcome({ goTo }),
+  },{
+    pathRegex: /^\/create/,
+    render: ({ goTo }) => initPageCreate({ goTo }),
   },
+  {
+    pathRegex: /^\/join/,
+    render: ({ goTo }) => initPageJoin({ goTo }),
+  },
+  
   {
     pathRegex: /^\/step-1$/,
     render: ({ goTo }) => initPageStepUno({ goTo }),
@@ -104,6 +115,11 @@ function renderPath(): void {
 
 export function initRouter(container: Element): void {
   rootContainer = container;
+   window.addEventListener("popstate", () => {
+    renderPath();
+  });
+
+
   
 
 

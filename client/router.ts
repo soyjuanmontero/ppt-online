@@ -7,6 +7,9 @@ import { initPagePlay } from "./pages/play";
 import { initpageMove } from "./pages/move";
 import { initPageResult } from "./pages/result";
 
+import { initPageLoby } from "./pages/lobby";
+
+
 
 type RouterPath = {
   pathRegex: RegExp;
@@ -28,7 +31,11 @@ const routes: RouterPath[] = [
     pathRegex: /^\/join/,
     render: ({ goTo }) => initPageJoin({ goTo }),
   },
-  
+ {
+    pathRegex: /^\/lobby/,
+    render: ({ goTo }) => initPageLoby({ goTo }),
+  },
+ 
   {
     pathRegex: /^\/step-1$/,
     render: ({ goTo }) => initPageStepUno({ goTo }),

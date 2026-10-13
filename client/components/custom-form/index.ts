@@ -48,10 +48,24 @@ divContainerTextFields.appendChild(textFieldEl)
     }
    render(){
         this.formEl.classList.add("container")
+         const widthButton=(this.getAttribute("width-button") )?? "322px"
+          const widthTextField=(this.getAttribute("width_text-fields") )?? "313px"
+          const marginBottom=(this.getAttribute("margin-bottom") ) ?? "20px"
         this.styleElement.innerHTML=`
         
         .container_text-fields{
-        margin-bottom:20px;}
+            margin :0 auto;
+            margin-bottom:${marginBottom};
+            }
+
+
+        .container-button{
+        width:${widthButton};
+
+        }
+        .container_text-fields{
+        width:${widthTextField}
+        }
 
         `
         this.formEl.innerHTML=`

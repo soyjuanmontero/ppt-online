@@ -10,10 +10,10 @@ export function initPagePlay(params:Params){
     style.innerHTML=`
        .container{
     
-    
+    padding-top:125px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    
 width: 375px;
     margin: 0 auto;
     
@@ -24,9 +24,14 @@ width: 375px;
     
 }
     .counter{
+    align-self:center;
     margin:0 auto;}
+    .rock-papers {
+    margin-top: auto;
+}
 
     .hidden { display: none; }
+    
     
     `
     div.classList.add('container')
@@ -37,7 +42,7 @@ width: 375px;
     div.innerHTML=`
         <counter-img class="counter" id="counter"></counter-img>
 
-        <rock-papers modifications='page-1' interactive id="rps"></rock-papers>
+        <rock-papers modifications='page-1' interactive id="rps" class="rock-papers" height="233px"></rock-papers>
         
     
     `
@@ -50,7 +55,7 @@ width: 375px;
         counter?.classList.add('hidden')
         
         
-        const move=state.move(e.detail.choice)
+        
         
        
        
@@ -65,13 +70,13 @@ width: 375px;
     counter?.addEventListener("time-out",(e:any)=>{
           if (userHasPlayed) return; 
         const playerMove=state.computerSelection()
-        const move=state.move(playerMove)
+        
         
         
         
 
         timer2=setTimeout(() => {
-            params.goTo("/move")
+             params.goTo("/move")
   
 }, 1000);
     })

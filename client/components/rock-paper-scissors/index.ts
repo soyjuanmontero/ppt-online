@@ -81,7 +81,9 @@ element?.addEventListener("click",(event)=>{
         
         render(){
              
-               const       modifications=(this.getAttribute("modifications") as Modifications)?? "welcome"
+               const  modifications=(this.getAttribute("modifications") as Modifications)?? "welcome"
+               const       height=(this.getAttribute("height") )?? "131px"
+               
                     const    computerMove=this.getAttribute('computer') as Move
                    const   playerMove=this.getAttribute('player') as Move
              
@@ -106,9 +108,7 @@ element?.addEventListener("click",(event)=>{
 
       
 .container {
-   position: absolute;
-    bottom: -49px;
-    left: 0;
+  
     width: 100%;
     
     
@@ -124,17 +124,12 @@ element?.addEventListener("click",(event)=>{
     gap:46px;
   
   }
-   .welcome{
-    height:131px;
-  }
-    .container.page-1 img{
-        height:233px;}
-
+ 
 
 .container img {
     
 
-    height: auto; /* Mantiene la proporción para que no se deformen */
+    height:${height};
     object-fit: cover; /* Recorta la imagen automáticamente si no encaja en el espacio */
 
 
@@ -191,7 +186,7 @@ transform: scaleY(1);
 
         if(modifications==="welcome"||modifications==="page-1"){
 
-            
+         
             this.div.innerHTML=`
     
             <div class="container ${modifications}">

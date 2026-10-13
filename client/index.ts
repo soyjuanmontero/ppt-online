@@ -7,6 +7,7 @@ import { initComponentStar } from "./components/star"
 import { initComponentRockPaperScissors } from "./components/rock-paper-scissors"
 import { initComponentScore } from "./components/score"
 import { initRouter } from "./router"
+import { initComponentGameHeader } from "./components/game-header"
 
 
 
@@ -18,7 +19,8 @@ initComponentConfrontation()
 
                 initComponentStar()
 initComponentCounter()
-initComponentScore();
+initComponentScore()
+initComponentGameHeader();
 
 
 (() => {
@@ -28,7 +30,7 @@ initComponentScore();
 
       
         initRouter(appEl)
-    
+
     }
     
 })();

@@ -9,7 +9,7 @@ interface User{
     userName:string,
     userId:string,
     choice?:Reglas
-    online?:boolean,
+    online:boolean,
     ready:boolean
 }
 interface Room{
@@ -19,7 +19,8 @@ interface Room{
 }
 interface Data{
     localPlayer:User,
-    remotePlayer:User
+    remotePlayer:User,
+    playersOnline: boolean;
     playersReadyToGame:boolean
     room:Room
    
@@ -47,6 +48,7 @@ listenToTheRoom():any,
 updatePlayer(users: Record<string, User>) :void,
 readytoPlay():Promise<object>
 choseAMove(choice:Reglas):Promise<object>
+bothPlayersOnline(localPlayer:User, remotePlayer:User):boolean
 bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
 }
 
@@ -65,16 +67,20 @@ const defaultData: Data = {
     localPlayer:{
         userName:"",
         userId:"",
-        ready:false
+        online:false,
+        ready:false,
         
 
         
     },remotePlayer:{
         userName:"",
         userId:"",
+        online:false,
         ready:false
        
-    },playersReadyToGame:false,
+    },
+    playersOnline: false,
+    playersReadyToGame:false,
     room:{
       roomShortId:"",
       roomLongId:""
@@ -192,6 +198,7 @@ const state:State={
         localPlayer:{
           userId,
           userName,
+          online:false,
           ready:false
         }
       })
@@ -377,9 +384,11 @@ let localPlayer = state.localPlayer;
     }
   });
 const playersReadyToGame = this.bothPlayersReady(localPlayer, remotePlayer);
+const playersOnline = this.bothPlayersOnline(localPlayer, remotePlayer);
   this.setState({
     localPlayer,
     remotePlayer,
+    playersOnline,
     playersReadyToGame
   });
   
@@ -457,6 +466,10 @@ async choseAMove(choice){
     return { error}
   }
 
+},
+bothPlayersOnline(localPlayer: User, remotePlayer: User): boolean {
+  
+  return localPlayer.online && remotePlayer.online;
 },
 bothPlayersReady(localPlayer: User, remotePlayer: User): boolean {
   

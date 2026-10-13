@@ -7,16 +7,18 @@ class Button extends HTMLElement{
     shadow=this.attachShadow({mode:"open"})
           button=document.createElement("button")
          styleElement=document.createElement("style")
+         
     connectedCallback(){
         this.render()
 
     }
     render(){
         
-   
+      
+      
          this.button.textContent=this.textContent
          this.button.className="button-primary"
-        
+         
     
         this.styleElement.innerHTML=`
         

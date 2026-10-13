@@ -8,32 +8,45 @@ export function initPageWelcome(params:Params){
     style.innerHTML=`
 
     .container{
-    overflow-y: hidden;
+
+    min-height:100dvh;
     
-    
+
     display: flex;
     flex-direction: column;
     
-width: 375px;
+     min-width: 375px;
     margin: 0 auto;
-    
-
-
-    
-    height: 100vh;
+    --hands-height: 128px;
     
 }
+     @media (min-width: 768px) {
+  .container {
+    --hands-height: 181px;
+  }
+}
+  .content{
+  
+  flex:1;
+display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 73px 0 39px;
+  
+  }
+    @media (min-width: 768px) {
+  .content {
+    padding:0;
+    justify-content:space-evenly;
+  }
+}
+
     .welcome-title{
     width: 308px;
-    padding:53px 0 39px;
-
-   
-  
-  
-    
-    margin: 0 auto;
+     margin: 0 auto;
     
 }
+  
 
 
     .welcome-title h1{
@@ -48,11 +61,20 @@ width: 375px;
 .welcome-button{
 margin: 0 auto;
     width: 322px;
-   margin-bottom:39px
+   
+}
+   @media (min-width: 768px) {
+  .welcome-button {
+    width: 336px;
+   
+  }
 }
     .container-new{
     margin-bottom:20px}
-
+          @media (min-width: 768px) {
+   .container-new{
+    margin-bottom:39px}
+}
 
 
    
@@ -63,30 +85,32 @@ margin: 0 auto;
     
     div.classList.add("container")
     div.innerHTML=`
+<div class="content">
     <div class="welcome-title">
         <h1 >
                 Piedra Papel o 
                 
                 Tijera
         </h1>
-        </div>
-        <div class="welcome-button">
+     </div>
+     <div class="welcome-button">
         <div class="container-new">
         
-        <button-primary  class="new">Nuevo juego</button-primary>
+            <button-primary  class="new">Nuevo juego</button-primary>
         </div>
-        <div class="container-join">
+     <div class="container-join">
         
         <button-primary  class="join">Ingresar a una sala</button-primary>
+    </div>
+</div>
         </div>
 
-        </div>
 
-
-        <rock-papers></rock-papers>
+        <rock-papers height="var(--hands-height)"></rock-papers>
         
     
     `
+    
 //   
     const buttonNewEl=div.querySelector(".new")
     const buttonJoinEl=div.querySelector(".join")
@@ -112,6 +136,7 @@ margin: 0 auto;
     })
 }
     div.appendChild(style)
+    
 
     return {element:div}
    

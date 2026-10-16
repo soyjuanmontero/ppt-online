@@ -10,19 +10,21 @@ export function initPageResult(params:Params){
 
     .container{
    
-    height:100vh;
+   
+    height:100dvh;
 
-   padding: 36px 20px;
+   
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
+   
     background-color:#888949E5;
     
 }
   
 .container-boton{
- width:375px;}
+ width:335px;}
 
 .star{
 margin-bottom:11px;
@@ -36,8 +38,8 @@ background-color:#894949E5}
     `
     
     function render(){
-        const currentState=state.getState()
-       const result= state.whoWins(currentState.computerMove,currentState.playerMove)
+        const {score}=state.getState()
+       const result= state.whoWins("21")
         div.classList.remove("lose") 
        if(result==="lose"){
         div.classList.add("lose")
@@ -47,9 +49,9 @@ background-color:#894949E5}
 
         div.innerHTML=`
         <result-star class="star" result="${result}"></result-star>
-        <score-el class="score" computer="${currentState.score.computer}" player="${currentState.score.player}"></score-el>
+        <score-el class="score" computer="${score.localPlayer}" player="${score.remotePlayer}"></score-el>
         <div class="container-boton">
-        <button-primary textContent='Volver a Jugar' id="button"></button-primary>
+        <button-primary  id="button">Volver a Jugar</button-primary>
         </div>
         
         
@@ -64,7 +66,7 @@ background-color:#894949E5}
     buttonEl?.addEventListener("click", (e)=>{
         
         
-        params.goTo("/step-1")
+        params.goTo("/lobby")
     })
     
     

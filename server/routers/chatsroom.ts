@@ -376,7 +376,7 @@ const winnerId=whoWins(player1,player2)
                 history:newHistory
              })
               return res.status(200).json({ 
-                        message:"ok",
+                        winnerId,
                         
                      });
 
@@ -387,7 +387,7 @@ const winnerId=whoWins(player1,player2)
                 history:history
              })
               return res.status(200).json({ 
-                        message:"ok",
+                        winnerId,
                         
                      });
   

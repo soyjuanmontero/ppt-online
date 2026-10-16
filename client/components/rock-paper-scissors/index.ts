@@ -84,11 +84,11 @@ element?.addEventListener("click",(event)=>{
                const  modifications=(this.getAttribute("modifications") as Modifications)?? "welcome"
                const       height=(this.getAttribute("height") )?? "131px"
                
-                    const    computerMove=this.getAttribute('computer') as Move
-                   const   playerMove=this.getAttribute('player') as Move
+                    const    remotePlayerMove=this.getAttribute('remote-player') as Move
+                   const   localPlayerMove=this.getAttribute("local-player") as Move
              
-            const computerImgSrc = imagesMap[computerMove] || ""
-            const playerImgSrc = imagesMap[playerMove] || ""
+            const remotePlayerImgSrc = imagesMap[remotePlayerMove] || ""
+            const localPlayerImgSrc = imagesMap[localPlayerMove] || ""
         
         
    
@@ -208,12 +208,12 @@ transform: scaleY(1);
         
         <div class="up">
         
-        <img src="${computerImgSrc}"  alt="${computerMove}">
+        <img src="${remotePlayerImgSrc}"  alt="${remotePlayerMove}">
         </div>
 
           <div class="down">
         
-        <img src="${playerImgSrc}"  alt="${playerMove}">
+        <img src="${localPlayerImgSrc}"  alt="${localPlayerMove}">
         </div>
         
 

@@ -34,7 +34,7 @@ class GameHeader extends HTMLElement{
             font-weight:600;
         }
             .room{
-            margin-top:5px;
+            
             font-weight:700;
             }
    

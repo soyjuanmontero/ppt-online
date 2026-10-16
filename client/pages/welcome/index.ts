@@ -10,8 +10,8 @@ export function initPageWelcome(params:Params){
     .container{
 
     min-height:100dvh;
-    
-
+    overflow:hidden;
+   
     display: flex;
     flex-direction: column;
     
@@ -20,25 +20,44 @@ export function initPageWelcome(params:Params){
     --hands-height: 128px;
     
 }
-     @media (min-width: 768px) {
-  .container {
-    --hands-height: 181px;
-  }
+  
+@media (min-height: 700px) {
+    .container {
+        --hands-height: 181px;
+    }
+}
+    @media (max-height: 630px) {
+    .container {
+        --hands-height: 101px;
+    }
 }
   .content{
   
-  flex:1;
+  
 display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 73px 0 39px;
+  flex:1;
+  justify-content:space-between;
+  padding-top:73px;
+
+ 
   
   }
     @media (min-width: 768px) {
   .content {
-    padding:0;
-    justify-content:space-evenly;
+  --width-button: 337px;
   }
+}
+  @media (min-height: 700px) {
+    .content {
+   justify-content:space-evenly;
+       
+    }
+}  @media (max-height: 630px) {
+    .content {
+   padding-top:59px;
+       
+    }
 }
 
     .welcome-title{
@@ -71,11 +90,14 @@ margin: 0 auto;
 }
     .container-new{
     margin-bottom:20px}
-          @media (min-width: 768px) {
-   .container-new{
-    margin-bottom:39px}
-}
 
+
+    rock-papers {
+
+  margin-top:auto;
+    transform: translateY(20px);
+    
+}
 
    
     `
@@ -88,7 +110,8 @@ margin: 0 auto;
 <div class="content">
     <div class="welcome-title">
         <h1 >
-                Piedra Papel o 
+                Piedra <br>
+                Papel o  <br>
                 
                 Tijera
         </h1>

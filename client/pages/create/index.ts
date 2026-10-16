@@ -9,7 +9,7 @@ export function initPageCreate(params:Params){
     style.innerHTML=`
     .container{
         min-height:100dvh;
-        
+        overflow:hidden;
     display: flex;
     flex-direction: column;
      
@@ -19,13 +19,17 @@ export function initPageCreate(params:Params){
    
     
     
-}   @media (min-width: 768px) {
+}   @media (min-height: 700px) {
   .container {
  
          --hands-height: 181px;
         
   
   }
+}  @media (max-height: 630px) {
+    .container {
+        --hands-height: 101px;
+    }
 }
     
 
@@ -36,21 +40,29 @@ export function initPageCreate(params:Params){
   flex:1;
 display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 73px 0 39px;
+  justify-content:space-between;
+  padding-top:49px;
+  
   
   }
      @media (min-width: 768px) {
   .content {
   --width-button: 337px;
-        --width_text-fields:337px;
-        --margin-bottom:39px;
-         --hands-height: 181px;
-        
-    padding:0;
-    justify-content:space-evenly;
-  }
+        --width_text-fields:337px;}
+} @media (min-height: 700px) {
+    .content {
+   justify-content:space-evenly;
+       
+    }
+}  @media (max-height: 630px) {
+    .content {
+   padding-top:29px;
+       
+    }
 }
+
+
+
     .welcome-title{
     width: 308px;
    
@@ -75,7 +87,12 @@ margin: 0 auto;
   
 }
 
- 
+  rock-papers {
+
+  
+    transform: translateY(20px);
+}
+
    
     `
     
@@ -87,7 +104,8 @@ margin: 0 auto;
     <div class="content">
         <div class="welcome-title">
             <h1 > 
-                    Piedra Papel o 
+                    Piedra <br>
+                     Papel o <br>
                     
                     Tijera
             </h1>

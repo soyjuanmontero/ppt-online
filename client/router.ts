@@ -2,7 +2,7 @@
 import { initPageWelcome } from "./pages/welcome";
 import {initPageCreate} from "./pages/create"
 import {initPageJoin} from "./pages/join"
-import { initPageStepUno } from "./pages/step-1";
+
 import { initPagePlay } from "./pages/play";
 import { initpageMove } from "./pages/move";
 import { initPageResult } from "./pages/result";
@@ -36,10 +36,7 @@ const routes: RouterPath[] = [
     render: ({ goTo }) => initPageLoby({ goTo }),
   },
  
-  {
-    pathRegex: /^\/step-1$/,
-    render: ({ goTo }) => initPageStepUno({ goTo }),
-  },
+  
   {
     pathRegex: /^\/play$/,
     render: ({ goTo }) => initPagePlay({ goTo }),

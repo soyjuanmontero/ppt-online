@@ -25,8 +25,8 @@ interface Data{
     room:Room
    
     score:{
-        player:number,
-        computer:number
+        localPlayer:number,
+        remotePlayer:number
     }
     
 }
@@ -38,7 +38,7 @@ getState():Data,
 setState(newState:Partial<Data>):void,
 subscribe(callback:()=>any):void,
 computerSelection():Reglas,
-whoWins(computer:Reglas,player:Reglas):Results,
+whoWins(winnerId:string):Results,
 // move(playerMove:Reglas):void,
 createUser(userName:string):Promise<object>,
 createRoom():Promise<object>,
@@ -53,7 +53,7 @@ bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
 }
 
 type Reglas="piedra"| "papel" |"tijera"
-type Results= "win" |"lose"|"draw"
+type Results= "win" |"lose"
 
 const reglas={
     piedra:"tijera",
@@ -66,17 +66,18 @@ const reglas={
 const defaultData: Data = {
     localPlayer:{
         userName:"",
-        userId:"",
+        userId:"22",
         online:false,
         ready:false,
-        
+        choice:"piedra"
 
         
     },remotePlayer:{
         userName:"",
         userId:"",
         online:false,
-        ready:false
+        ready:false,
+        choice:"piedra"
        
     },
     playersOnline: false,
@@ -87,8 +88,8 @@ const defaultData: Data = {
     },
           
     score: {
-        player: 0,
-        computer: 0            
+        localPlayer: 0,
+      remotePlayer: 0            
     }
 };
 // const initialData: Data = savedState ? JSON.parse(savedState) : defaultData;
@@ -129,23 +130,18 @@ const state:State={
         
       
     },
-    whoWins(computer,player){
-        
+    whoWins(winnerId){
+        const {userId}=state.getState().localPlayer
 
-        if(computer===player){
+        if(winnerId===userId){
             
-            return "draw"
-        }
-        else if(reglas[player]===computer){
-           
-
-           
             return "win"
         }
-        else{
+       
+        
            
             return "lose"
-        }
+        
 
 
     },

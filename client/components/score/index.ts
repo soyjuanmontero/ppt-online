@@ -31,30 +31,34 @@ class Score extends HTMLElement{
 
       .container{
       width:259px;
-      
+   
       border:10px solid #000000;
       background-color:#FFFFFF;
-      text-align:center;
-        padding:10px 30px 0 0;
+      
+     
         display:flex;
         flex-direction:column;
       
         justify-content:center;
+        align-items:center;
         
         }
         .container h1,p{
+        
             font-weight:400;
        font-size:55px;
       margin:0;
         
       }
       .container h1{
+      
       margin-bottom:13px;}
       
       .score{
-        text-align:end;
+        align-self:end;
         }
         .score p{
+        
             font-size:45px;
         
       }  
@@ -67,8 +71,8 @@ class Score extends HTMLElement{
         div.innerHTML=`
         <h1>Score</h1>
         <div class="score">
-        <p>Tu:<span class="fact">${player}</span></p>
-        <p>Maquina:<span class="fact">${computer}</span></p>
+        <p>Juan: <span class="fact">${player}</span></p>
+        <p>Darling:<span class="fact">${computer}</span></p>
         
         </div>
          

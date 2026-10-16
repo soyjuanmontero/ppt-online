@@ -24,11 +24,11 @@ width: 375px;
     `
 
     function render(){
-        const currentState=state.getState()
+        const {localPlayer,remotePlayer}=state.getState()
         
         
     div.innerHTML=`
-        <rock-papers modifications='versus' player=${currentState.playerMove} computer=${currentState.computerMove} ></rock-papers>
+        <rock-papers modifications='versus' local-player=${localPlayer.choice} remote-player=${remotePlayer.choice} ></rock-papers>
     
     `
   
@@ -49,10 +49,10 @@ width: 375px;
     
 
 const timer=setTimeout(() => {
-    const currentState=state.getState()
-    if(currentState.computerMove===currentState.playerMove){
+    const {localPlayer, remotePlayer}=state.getState()
+    if(remotePlayer.choice===localPlayer.choice){
 
-        params.goTo("/step-1")
+       params.goTo("/play")
     }
    
      else{

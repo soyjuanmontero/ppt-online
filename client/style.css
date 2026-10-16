@@ -12,10 +12,9 @@
 *{
     box-sizing: border-box;
 
+
 }
-/* html, body {
-  
-  height: 100%; /* Asegura que el contenedor no supere la pantalla */
+
 
 body{
     margin:0 auto;

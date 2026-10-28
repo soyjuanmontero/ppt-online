@@ -1,5 +1,5 @@
-export function initComponentTextField(){
-class TextField extends HTMLElement{
+
+export class TextField extends HTMLElement{
     constructor(){
         super()
 
@@ -65,6 +65,6 @@ class TextField extends HTMLElement{
         this.shadow.appendChild(this.styleElement)
     }
 }
+
 customElements.define("text-field", TextField)
 
-}

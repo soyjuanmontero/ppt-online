@@ -1,6 +1,6 @@
 import { Params } from "../../interfaces"
 import { CustomForm } from "../../components/custom-form"
-
+import { state } from "../../state"
 
 export function initPageCreate(params:Params){
 
@@ -120,7 +120,52 @@ margin: 0 auto;
     
     `
     const formEl=div.querySelector("custom-form") as CustomForm
+formEl.addEventListener("form-submit",async (e)=>{
+    const {gameAction}=state.getState()
+    const value=(e as CustomEvent<string>).detail
+    if(!value){
+        console.log("el campo nombre esta vacio")
+        return 
+    }
+     
+       const resCreateUser:any=await state.createUser(value)
+      if(!resCreateUser.succes){
+        console.error(resCreateUser.message)
+        return
+      }
+      
+      console.log(resCreateUser.message)
 
+      if(gameAction==="create"){
+          const resCreateRoom:any=await state.createRoom()
+          if(!resCreateRoom.succes){
+            console.error(resCreateRoom.message)
+            return
+        }
+        console.log(resCreateRoom.message)
+
+
+      }
+      else{
+         const resSaveLongId:any= await state.getAndSaveRoomLongId()
+          if(!resSaveLongId.succes){
+            console.error(resSaveLongId.message)
+            return
+        }
+        
+        const resJoinRoom:any= await state.joinTheRoom()
+          if(!resJoinRoom.succes){
+            console.error(resJoinRoom.message)
+            return
+        }
+        console.log(resJoinRoom.message)
+
+      }
+      
+
+
+        params.goTo("/lobby")
+})
 
 
 
@@ -131,6 +176,7 @@ margin: 0 auto;
     }
 
     ])
+    
 
     div.appendChild(style)
 

@@ -1,6 +1,7 @@
 import  "./components/custom-form"
+import "./components/text-field"
 import { initComponentButton } from "./components/button"
-import { initComponentTextField } from "./components/text-field"
+
 import { initComponentConfrontation } from "./components/confrontation"
 import { initComponentCounter } from "./components/counter"
 import { initComponentStar } from "./components/star"
@@ -11,7 +12,7 @@ import { initComponentGameHeader } from "./components/game-header"
 
 
 
-initComponentTextField()
+
 initComponentButton()
 
 initComponentRockPaperScissors()

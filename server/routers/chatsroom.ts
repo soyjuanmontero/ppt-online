@@ -377,7 +377,7 @@ const winnerId=whoWins(player1,player2)
              })
               return res.status(200).json({ 
                         winnerId,
-                        
+                        message:"ok"
                      });
 
   }
@@ -388,9 +388,71 @@ const winnerId=whoWins(player1,player2)
              })
               return res.status(200).json({ 
                         winnerId,
+                        message:"ok"
                         
                      });
   
+
+  
+
+
+  
+ 
+
+
+    }
+    catch(error){
+           console.error("Error al buscar la sala:", error);
+        return res.status(500).json({ message: "Error interno del servidor" });
+    }
+})
+
+
+router.put("/:roomLongId/reset-choice", async (req,res)=>{
+    try{
+        
+       
+            const {roomLongId}=req.params
+            const currentRoomRef=roomsRef.child(roomLongId)
+             const currentRoomSnaphopt= await currentRoomRef.get()
+             const dataRoom=currentRoomSnaphopt.val()
+        if(!dataRoom){
+    return res.status(404).json({
+        message:"error la sala no existe"
+    })
+ }
+    
+        const {users}=dataRoom
+        
+     
+        
+        if(!users){
+             return res.status(400).json({ message: "Error no hay usuarios en la sala " });
+        }
+      
+const players=Object.entries(users as Record<string, any>)
+console.log(players[0])
+
+const verifyData=players.every(([userId,data ])=>{
+    return data.choice!==undefined && data.ready===true && data.online===true
+
+})
+console.log(verifyData)
+
+if(!verifyData){
+     return res.status(400).json({ message: "error no se puede realizar esta operacion" });
+}
+
+const player1=players[0][0]
+const player2=players[1][0]
+  await currentRoomRef.update({
+                  [`users/${player1}/choice`]: null,
+    [`users/${player2}/choice`]: null
+             })
+              return res.status(200).json({ 
+                        message:"ok"
+                     });
+
 
   
 

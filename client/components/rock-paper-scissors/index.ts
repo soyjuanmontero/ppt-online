@@ -84,8 +84,8 @@ element?.addEventListener("click",(event)=>{
                const  modifications=(this.getAttribute("modifications") as Modifications)?? "welcome"
                const       height=(this.getAttribute("height") )?? "131px"
                
-                    const    remotePlayerMove=this.getAttribute('remote-player') as Move
-                   const   localPlayerMove=this.getAttribute("local-player") as Move
+                    const    remotePlayerMove=(this.getAttribute('remote-player') as Move) ?? ""
+                   const   localPlayerMove=(this.getAttribute("local-player") as Move) ?? ""
              
             const remotePlayerImgSrc = imagesMap[remotePlayerMove] || ""
             const localPlayerImgSrc = imagesMap[localPlayerMove] || ""

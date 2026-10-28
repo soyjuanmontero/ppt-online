@@ -25,7 +25,7 @@ class Counter extends HTMLElement{
       
      div=document.createElement("div")
       perimeter=2*Math.PI*40
-         initialValue=3
+         initialValue=6
          currentTime=this.initialValue
          interval:any
     starCounter(){

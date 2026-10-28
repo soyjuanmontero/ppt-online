@@ -1,4 +1,5 @@
 import { Params } from "../../interfaces"
+import { state } from "../../state"
 
 
 export function initPageWelcome(params:Params){
@@ -144,6 +145,9 @@ margin: 0 auto;
     
     buttonNewEl.addEventListener("click",(e)=>{
         e.preventDefault()
+        state.setState({
+            gameAction:"create"
+        })
         params.goTo("/create")
       
 
@@ -153,6 +157,9 @@ margin: 0 auto;
         
     buttonJoinEl.addEventListener("click",(e)=>{
         e.preventDefault()
+          state.setState({
+            gameAction:"join"
+        })
         params.goTo("/join")
       
 

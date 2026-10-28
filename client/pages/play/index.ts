@@ -1,9 +1,58 @@
+
 import { Params } from "../../interfaces"
 import { state } from "../../state"
+import { time } from "console";
+const reglas={
+    piedra:"tijera",
+    papel:"piedra",
+    tijera:"papel"
+}
 
 
+export function initPagePlay(params:Params)
+{
+    let assigningChoice = false;
 
-export function initPagePlay(params:Params){
+ 
+
+const checkChoices = async () => {
+    const { localPlayer, remotePlayer } = state.getState();
+
+    if (!localPlayer.choice && remotePlayer.choice && !assigningChoice) {
+        assigningChoice = true;
+
+        const newChoice:any= reglas[remotePlayer.choice];
+
+        try {
+            const res:any = await state.choseAMove(newChoice);
+
+            if (!res.succes) {
+                assigningChoice = false;
+            }
+            return true
+        } catch (error) {
+            assigningChoice = false;
+            console.error(error);
+        }
+    }
+};
+ 
+   const unsubscribeState=state.subscribe( ()=>{
+    
+
+   const { localPlayer, remotePlayer } = state.getState();
+   
+
+    if (localPlayer.choice && remotePlayer.choice) {
+        params.goTo("/move");
+        return;
+    }
+  
+   if (timeIsOver) {
+         checkChoices();
+    }
+   
+})
 
     const div=document.createElement('div')
     const style=document.createElement('style')
@@ -50,8 +99,17 @@ width: 375px;
     const counter=div.querySelector('#counter')
     let userHasPlayed = false;
     
-    rps?.addEventListener("select-users",(e:any)=>{
+    rps?.addEventListener("select-users", async(e:any)=>{
         userHasPlayed=true
+        
+        const res:any= await state.choseAMove(e.detail.choice)
+        if(res.succes){
+         
+        }
+        else{
+
+            console.error(res)
+        }
         counter?.classList.add('hidden')
         
         
@@ -61,31 +119,30 @@ width: 375px;
        
         
             
-            timer1=setTimeout(() => {
-                params.goTo("/move")
-    
-    }, 2000);
+          
     })
-    
+    let timeIsOver = false;
     counter?.addEventListener("time-out",(e:any)=>{
+        
           if (userHasPlayed) return; 
-        const playerMove=state.computerSelection()
-        
-        
-        
+       timeIsOver=true
+       checkChoices()
+       const {localPlayer,remotePlayer}=state.getState()
+        if(!localPlayer.choice && !remotePlayer.choice){
+            params.goTo("/move")
+        }
         
 
-        timer2=setTimeout(() => {
-             params.goTo("/move")
-  
-}, 1000);
+
+      
     })
+ 
+ 
+
    
-const onDestroy = () => {
-        if (timer1) clearTimeout(timer1);
-        if (timer2) clearTimeout(timer2);
-    };
+
     div.appendChild(style)
-    return {element:div, onDestroy}
+    return {element:div, 
+        onDestroy:unsubscribeState}
    
 }

@@ -38,8 +38,8 @@ background-color:#894949E5}
     `
     
     function render(){
-        const {score}=state.getState()
-       const result= state.whoWins("21")
+        const {score, localPlayer,remotePlayer}=state.getState()
+       const result= state.whoWins()
         div.classList.remove("lose") 
        if(result==="lose"){
         div.classList.add("lose")
@@ -49,7 +49,7 @@ background-color:#894949E5}
 
         div.innerHTML=`
         <result-star class="star" result="${result}"></result-star>
-        <score-el class="score" computer="${score.localPlayer}" player="${score.remotePlayer}"></score-el>
+        <score-el class="score" name-local="${localPlayer.userName}" score-local="${score.localPlayer}" score-remote="${score.remotePlayer}" name-remote="${remotePlayer.userName}"></score-el>
         <div class="container-boton">
         <button-primary  id="button">Volver a Jugar</button-primary>
         </div>

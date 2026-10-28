@@ -1,12 +1,11 @@
 import {  ref, onValue, push } from "firebase/database";
 import { db } from "./db";
-import { BlobOptions } from "buffer";
-import { promises } from "dns";
+
 
 
 const API_BASE_URL = process.env.PUBLIC_API_URL
 interface User{
-    userName:string,
+    userName?:string,
     userId:string,
     choice?:Reglas
     online:boolean,
@@ -17,12 +16,15 @@ interface Room{
   roomLongId?:string
 
 }
+type GameAction="create"|"join"
 interface Data{
     localPlayer:User,
     remotePlayer:User,
+    gameAction?:GameAction
     playersOnline: boolean;
     playersReadyToGame:boolean
-    room:Room
+    room:Room,
+    winner?:string
    
     score:{
         localPlayer:number,
@@ -36,9 +38,9 @@ data:Data,
 listener:Function[]
 getState():Data,
 setState(newState:Partial<Data>):void,
-subscribe(callback:()=>any):void,
+subscribe(callback:()=>void): () => void
 computerSelection():Reglas,
-whoWins(winnerId:string):Results,
+whoWins():Results,
 // move(playerMove:Reglas):void,
 createUser(userName:string):Promise<object>,
 createRoom():Promise<object>,
@@ -50,6 +52,8 @@ readytoPlay():Promise<object>
 choseAMove(choice:Reglas):Promise<object>
 bothPlayersOnline(localPlayer:User, remotePlayer:User):boolean
 bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
+updateHistory():Promise<object>
+resetChoices() :Promise<object>
 }
 
 type Reglas="piedra"| "papel" |"tijera"
@@ -61,23 +65,24 @@ const reglas={
     tijera:"papel"
 }
 
-// const savedState = localStorage.getItem("state");
+const savedState = localStorage.getItem("state");
 
 const defaultData: Data = {
     localPlayer:{
-        userName:"",
-        userId:"22",
-        online:false,
-        ready:false,
-        choice:"piedra"
-
         
-    },remotePlayer:{
-        userName:"",
         userId:"",
         online:false,
         ready:false,
-        choice:"piedra"
+        
+
+        
+    },remotePlayer:{
+      
+      
+        userId:"",
+        online:false,
+        ready:false,
+        
        
     },
     playersOnline: false,
@@ -107,21 +112,21 @@ const state:State={
         ...this.data,
         ...newState
     };
-    // localStorage.setItem("state", JSON.stringify(this.data))
+   
+    localStorage.setItem("state", JSON.stringify(this.data))
 
         for(let cb of this.listener){
             cb()
         }
 
     },
-    subscribe(callback:()=>{}){
+subscribe(callback: () => void): () => void {
+    this.listener.push(callback);
 
-        this.listener.push(callback)
-
-        return () => {
+    return () => {
         this.listener = this.listener.filter(l => l !== callback);
     };
-    },
+},
     computerSelection(){
         const play: Reglas[] = ["piedra", "papel", "tijera"];
             return  play[Math.floor(Math.random() * play.length)];
@@ -130,10 +135,12 @@ const state:State={
         
       
     },
-    whoWins(winnerId){
-        const {userId}=state.getState().localPlayer
+    whoWins(){
+        const {localPlayer, winner}=state.getState()
+        console.log(winner)
+        console.log(localPlayer.userId)
 
-        if(winnerId===userId){
+        if(winner===localPlayer.userId){
             
             return "win"
         }
@@ -145,22 +152,7 @@ const state:State={
 
 
     },
-    // move(playerMove:Reglas){
-        
-
-    //     const computerMove=this.computerSelection()
-    //     const result=this.whoWins(computerMove,playerMove)
-       
-    //     const newScore = { ...this.data.score };
-    // if (result === "win") newScore.player++;
-    // if (result === "lose") newScore.computer++;
-    // this.setState({
-    //     playerMove,
-    //     computerMove,
-    //     score: newScore
-    // })
-
-    // },
+   
    async  createUser(userName){
        try {
              
@@ -230,6 +222,7 @@ const state:State={
    
 
     const resultado = await res.json();
+   
     
       const {message}=resultado
       if (!res.ok) {
@@ -301,8 +294,12 @@ const state:State={
       const {roomLongId}=this.getState().room
       const roomRef=ref(db,`rooms/${roomLongId}`)
 const unsubscribe = onValue(roomRef, (snapshot) => {
+
   const data = snapshot.val();
   const { users } = data;
+  console.log(data)
+
+
   
  
   
@@ -312,7 +309,7 @@ const unsubscribe = onValue(roomRef, (snapshot) => {
   } 
     
       
-      this.updatePlayer(users)
+      this.updatePlayer(data)
       return {message:"ok"}
     
       
@@ -364,8 +361,11 @@ return unsubscribe
 
 
     },
-    updatePlayer(users: Record<string, User>) {
-      console.log("update")
+    updatePlayer(data:any) {
+      const users:Record<string, User>=data.users
+      const history=data.history
+     
+     
   const state = this.getState();
 let localPlayer = state.localPlayer;
   let remotePlayer = state.remotePlayer;
@@ -374,18 +374,38 @@ let localPlayer = state.localPlayer;
     const player = { ...userData, userId };
 
     if (userId === localPlayer.userId) {
-      localPlayer = { ...localPlayer, ...player };
+      localPlayer = { ...localPlayer, ...player , choice:player.choice };
     } else {
-      remotePlayer = { ...remotePlayer, ...player };
+      remotePlayer = { ...remotePlayer, ...player , choice:player.choice };
     }
   });
 const playersReadyToGame = this.bothPlayersReady(localPlayer, remotePlayer);
 const playersOnline = this.bothPlayersOnline(localPlayer, remotePlayer);
+let {score}=state
+if(history){
+let scoreLocalPlayer=0
+let scoreRemotePlayer=0
+
+  Object.entries(history).forEach(([userId, value]) => {
+
+
+    if (userId === localPlayer.userId) {
+     scoreLocalPlayer=Number(value)
+    } else {
+      scoreRemotePlayer=Number(value)
+    }
+  });
+   score={
+    localPlayer:scoreLocalPlayer,
+    remotePlayer:scoreRemotePlayer
+  }
+}
   this.setState({
     localPlayer,
     remotePlayer,
     playersOnline,
-    playersReadyToGame
+    playersReadyToGame,
+    score
   });
   
 },
@@ -470,6 +490,83 @@ bothPlayersOnline(localPlayer: User, remotePlayer: User): boolean {
 bothPlayersReady(localPlayer: User, remotePlayer: User): boolean {
   
   return localPlayer.ready && remotePlayer.ready;
+},
+
+async updateHistory(){
+
+  try {
+              const {room}=this.getState()
+              
+              const {roomLongId}=room
+                if(!roomLongId){
+                    return {message:"faltan datos (roomLongId)"}
+                }
+       
+    const res = await fetch(`${API_BASE_URL}/chatRoom/${roomLongId}/history`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    
+    });
+
+   
+
+    const resultado = await res.json();
+     const {message,winnerId}=resultado
+      if (!res.ok) {
+          return{message}
+      }
+    state.setState({
+      winner:winnerId
+    })
+    return {succes:true, message}
+    
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return { error}
+  }
+
+  
+},
+async resetChoices(){
+  try {
+              const {room , localPlayer, remotePlayer}=this.getState()
+              
+              const {roomLongId}=room
+                if(!roomLongId ){
+                    return {message:"faltan datos (roomLongId)"}
+                }
+                 if(!localPlayer.choice && !remotePlayer.choice ){
+                    return {message:"No es posible realizar esta peticion "}
+                }
+       
+    const res = await fetch(`${API_BASE_URL}/chatRoom/${roomLongId}/reset-choice`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    
+    });
+
+   
+
+    const resultado = await res.json();
+     const {message}=resultado
+      if (!res.ok) {
+          return{message}
+      }
+    
+    return {succes:true, message}
+    
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return { error}
+  }
+
+
 }
 }
 export {state}

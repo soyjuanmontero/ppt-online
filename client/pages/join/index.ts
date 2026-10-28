@@ -1,5 +1,6 @@
 import { Params } from "../../interfaces"
 import { CustomForm } from "../../components/custom-form"
+import { state } from "../../state"
 
 
 export function initPageJoin(params:Params){
@@ -127,6 +128,18 @@ margin: 0 auto;
     
     `
     const formEl=div.querySelector("custom-form") as CustomForm
+
+        
+formEl.addEventListener("form-submit",async (e)=>{
+
+      const value=(e as CustomEvent<string>).detail
+      state.setState({
+        room:{
+            roomShortId:value
+        }
+      })
+      params.goTo("/create")
+})
 
 
 

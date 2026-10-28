@@ -7,6 +7,7 @@ class GameHeader extends HTMLElement{
     shadow=this.attachShadow({mode:"open"})
           divEl=document.createElement("div")
          styleElement=document.createElement("style")
+     
          
     connectedCallback(){
         this.render()
@@ -16,11 +17,11 @@ class GameHeader extends HTMLElement{
     render(){
         
       
-       const  localPlayerName=this.getAttribute("local_player-name")?? "CARLOS"
-       const  remotePlayerName=this.getAttribute("remote_player-name")?? "ALFONSO"
+       const  localPlayerName=this.getAttribute("local_player-name")?? ""
+       const  remotePlayerName=this.getAttribute("remote_player-name")?? "Oponente"
        const scoreLocalPlayer=this.getAttribute("score_local-player")?? "0"
        const scoreRemotePlayer=this.getAttribute("score_remote-player") ?? "0"
-    
+        const roomId= this.getAttribute("room-id") ?? ""
         
          
     this.divEl.classList.add("container")
@@ -66,7 +67,7 @@ class GameHeader extends HTMLElement{
         </div>
           <div class="room">
         <p class="room">Sala</p>
-        <p class="room-code" >1234</p>
+        <p class="room-code" >${roomId}</p>
         
         </div>
         `

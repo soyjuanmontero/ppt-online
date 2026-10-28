@@ -4,18 +4,32 @@ import { state } from "../../state"
 
 
 export function initPageLoby(params:Params){
-    const renderLobyState=()=>{
-        const currentState=state.getState()
-        const stateBothPlayerOnline=currentState.playersOnline
-         const {playersReadyToGame}=currentState
-         console.log(playersReadyToGame)
-         const localPlayerReady=currentState.localPlayer.ready
+   state.listenToTheRoom()
+ const unsubscribeState = state.subscribe(() => {
+    console.log("Aqui")
+    renderLobbyState();
+    state.bothPlayersReady
+});
+    const renderLobbyState=  ()=>{
+      
+        
+        const {playersOnline, playersReadyToGame,localPlayer, remotePlayer, score, room}=state.getState()
+        
+
+        
+         
+     
+         
         const  contentParagraphEl=div.querySelector(".content-paragraph")
+        const headerEl=div.querySelector(".header")
         
         if(!contentParagraphEl){
                 return
             }
 
+               if(!headerEl){
+                return
+            }
         const containerButtonEl=div.querySelector(".container-button") 
 
          if(!containerButtonEl){
@@ -23,7 +37,10 @@ export function initPageLoby(params:Params){
             }
 
         
-        if(!stateBothPlayerOnline){
+        if(!playersOnline){
+            headerEl.innerHTML=`
+            <game-header local_player-name="${localPlayer.userName}" room-id="${room.roomShortId}"></game-header>
+            `
           
             contentParagraphEl.innerHTML=`
            <p>
@@ -40,7 +57,10 @@ export function initPageLoby(params:Params){
             containerButtonEl.classList.add("none")
             return
             
-        } if(!localPlayerReady){
+        } if(!localPlayer.ready){
+             headerEl.innerHTML=`
+            <game-header local_player-name="${localPlayer.userName}" remote_player-name="${remotePlayer.userName}" score_local-player="${score.localPlayer}" score_remote-player="${score.remotePlayer}" room-id="${room.roomShortId}"></game-header>
+            `
             
             contentParagraphEl.innerHTML=`
               <p>
@@ -49,6 +69,7 @@ y elegí: piedra, papel o tijera antes de que pasen los 3 segundos.
             </p>
 
             `
+            containerButtonEl.classList.remove("none")
               
            
             return
@@ -66,12 +87,15 @@ containerButtonEl.classList.add("none")
      return
             
         }
-        params.goTo("/play")
+           if(state.data.playersReadyToGame){
+        params.goTo("play")
+    }
+    
       
         
     }
 
-    const unsubscribe = state.subscribe(renderLobyState);
+   
 
     const div=document.createElement('div')
     const style=document.createElement('style')
@@ -148,11 +172,14 @@ width:322px;}
     `
     
     
+    const {localPlayer,remotePlayer,score, room}=state.getState()
     
     
     div.classList.add("container")
     div.innerHTML=`
-    <game-header></game-header>
+    <div class="header">
+    
+    </div>
     <div class="content">
         <div class="content-paragraph">
             
@@ -168,21 +195,22 @@ width:322px;}
         
     
     `
-    renderLobyState()
+    renderLobbyState()
     
     const buttonEl=div.querySelector("button-primary")
     if(buttonEl){
-buttonEl.addEventListener("click",(e)=>{
-        state.setState({
-            localPlayer:{
-                ...state.getState().localPlayer,
-                ready:true
-
-            }
-        })
-       
+buttonEl.addEventListener("click",async(e)=>{
+   
+          const resRedy:any =await state.readytoPlay()
+       if(resRedy.succes){
+      
+     
+        
+    }
 
     })
+ 
+    
 
     }
     
@@ -193,7 +221,7 @@ buttonEl.addEventListener("click",(e)=>{
     div.appendChild(style)
 
     return {element:div,
-        onDestroy: unsubscribe
+        onDestroy: unsubscribeState
     }
    
 }

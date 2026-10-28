@@ -20,8 +20,10 @@ class Score extends HTMLElement{
        
         const div=document.createElement("div")
         const style=document.createElement("style")
-        const computer=this.getAttribute("computer")?? "0"
-        const player=this.getAttribute("player")?? "0"
+         const nameRemotePlayer=this.getAttribute("name-remote")?? ""
+        const nameLocalPlayer=this.getAttribute("name-local")?? ""
+        const scoreRemotePlayer=this.getAttribute("score-remote")?? "0"
+        const scoreLocalPlayer=this.getAttribute("score-local")?? "0"
        
    
         
@@ -71,8 +73,8 @@ class Score extends HTMLElement{
         div.innerHTML=`
         <h1>Score</h1>
         <div class="score">
-        <p>Juan: <span class="fact">${player}</span></p>
-        <p>Darling:<span class="fact">${computer}</span></p>
+        <p>${nameLocalPlayer}: <span class="fact">${scoreLocalPlayer}</span></p>
+        <p>${nameRemotePlayer}:<span class="fact">${scoreRemotePlayer}</span></p>
         
         </div>
          

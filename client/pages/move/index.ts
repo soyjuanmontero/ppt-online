@@ -1,7 +1,7 @@
 import { Params } from "../../interfaces"
 import { state } from "../../state"
 
-export function initpageMove(params:Params){
+export function  initpageMove(params:Params){
     
     const div=document.createElement('div')
     div.classList.add('container')
@@ -26,9 +26,16 @@ width: 375px;
     function render(){
         const {localPlayer,remotePlayer}=state.getState()
         
-        
+        if(!localPlayer.choice && !remotePlayer.choice){
+            console.log("aqui")
+             div.innerHTML=`
+        <rock-papers modifications='versus'   ></rock-papers>
+    
+    `
+            return
+        }
     div.innerHTML=`
-        <rock-papers modifications='versus' local-player=${localPlayer.choice} remote-player=${remotePlayer.choice} ></rock-papers>
+        <rock-papers modifications='versus' local-player=${localPlayer.choice } remote-player=${remotePlayer.choice } ></rock-papers>
     
     `
   
@@ -39,30 +46,49 @@ width: 375px;
 
    
 
+let timer: ReturnType<typeof setTimeout>;
 
-        
-
- 
- 
-
-
+const startMove = async () => {
+    const { localPlayer, remotePlayer } = state.getState();
     
+    const isDraw = localPlayer.choice === remotePlayer.choice;
+    console.log("isDraw: "+ isDraw)
 
-const timer=setTimeout(() => {
-    const {localPlayer, remotePlayer}=state.getState()
-    if(remotePlayer.choice===localPlayer.choice){
-
-       params.goTo("/play")
+    if (!isDraw) {
+        await state.updateHistory();
     }
-   
-     else{
 
-         params.goTo("/result")
-    }  
+    timer = setTimeout( async() => {
+        if(!localPlayer.choice&& !remotePlayer.choice){
+
+            params.goTo("/play")
+            return 
+        }
+        if (isDraw) {
+            const res:any=await state.resetChoices()
+            if(res.succes){
+                const {localPlayer,remotePlayer}=state.getState()
+                if(!localPlayer.choice && !remotePlayer.choice){
+            params.goTo("/play");
+            }
+            }
         
+        } else {
+            params.goTo("/result");
+        }
+    }, 2000);
+};
 
-}, 2000);
+startMove();
     
+    
+
+
+
+
+    
+
+
 
     const onDestroy = () => {
         clearTimeout(timer);

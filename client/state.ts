@@ -55,6 +55,7 @@ bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
 updateHistory():Promise<object>
 resetChoices() :Promise<object>
 resetRound() :Promise<object>
+resetState():void
 }
 
 type Reglas="piedra"| "papel" |"tijera"
@@ -103,6 +104,10 @@ const state:State={
        data:initialData,
 
     listener:[],
+    resetState() {
+  this.data = { ...defaultData };
+  localStorage.setItem("state", JSON.stringify(this.data));
+},
     
     getState(){
         

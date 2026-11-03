@@ -3,7 +3,7 @@ import { state } from "../../state"
 
 
 export function initPageWelcome(params:Params){
-
+state.resetState()
     const div=document.createElement('div')
     const style=document.createElement('style')
     style.innerHTML=`

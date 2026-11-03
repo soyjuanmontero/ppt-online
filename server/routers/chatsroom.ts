@@ -91,12 +91,12 @@ router.post("/:userId",async (req,res)=>{
 
  
          await newRoomRef.set({
-            playerCount:1,
+          
 
             users:{
                 [userId]:{
                     userName,
-                    online:true,
+                   
                     ready:false
 
                 }
@@ -171,41 +171,51 @@ router.put("/:userId/join",async(req,res)=>{
  const roomSnapshot=await newRoomRef.get()
  
  
- if(roomSnapshot.val().users[userId]){
-     return res.status(200).json({ message: "El usuario ya se encuentra dentro de la sala" })
- }
+
  
 
  
+const roomData = roomSnapshot.val();
+const users = roomData.users ?? {};
+const existingUser = users[userId];
+
+if (existingUser) {
+  if (existingUser.online === true) {
+    return res.status(409).json({
+      message: "El usuario ya está conectado a esta sala"
+    });
+  }
+
+  await newRoomRef.update({
+    [`users/${userId}/ready`]: false
+  });
+
+  return res.status(200).json({
+    message: "El usuario ha ingresado nuevamente a la sala"
+  });
+}
+
+const playersCount = Object.keys(users).length;
+
+if (playersCount < 2) {
+  await newRoomRef.update({
+    [`users/${userId}`]: {
+      userName,
+      ready: false
+    }
+  });
+
+  return res.status(200).json({
+    message: "El usuario ha ingresado a la sala"
+  });
+}
+
+return res.status(403).json({
+  message: "Acceso denegado, la sala está llena"
+});
+
  
- let {playerCount}=roomSnapshot.val()
- 
- if(playerCount<2){
-    playerCount+=1
-    
-   await newRoomRef.update({
-        playerCount:playerCount,
-            [`users/${userId}`]:{
-                userName,
-            online:true,
-            ready:false
-        }
-        
 
-    })
-      return res.status(200).json({ 
-               message:"El usuario a ingresado a la sala"
-            });
-   }
-
-
- 
- else{
-      return res.status(403).json({
-           message:" Acceso denegado, La sala esta llena"
-        })
-
- }
 
 
 
@@ -448,6 +458,70 @@ const player2=players[1][0]
   await currentRoomRef.update({
                   [`users/${player1}/choice`]: null,
     [`users/${player2}/choice`]: null
+             })
+              return res.status(200).json({ 
+                        message:"ok"
+                     });
+
+
+  
+
+
+  
+ 
+
+
+    }
+    catch(error){
+           console.error("Error al buscar la sala:", error);
+        return res.status(500).json({ message: "Error interno del servidor" });
+    }
+})
+
+
+
+router.put("/:roomLongId/reset-round", async (req,res)=>{
+    try{
+        
+       
+            const {roomLongId}=req.params
+            const currentRoomRef=roomsRef.child(roomLongId)
+             const currentRoomSnaphopt= await currentRoomRef.get()
+             const dataRoom=currentRoomSnaphopt.val()
+        if(!dataRoom){
+    return res.status(404).json({
+        message:"error la sala no existe"
+    })
+ }
+    
+        const {users}=dataRoom
+        
+     
+        
+        if(!users){
+             return res.status(400).json({ message: "Error no hay usuarios en la sala " });
+        }
+      
+const players=Object.entries(users as Record<string, any>)
+console.log(players[0])
+
+const verifyData=players.every(([userId,data ])=>{
+    return data.choice!==undefined && data.ready===true && data.online===true
+
+})
+console.log(verifyData)
+
+if(!verifyData){
+     return res.status(400).json({ message: "error no se puede realizar esta operacion" });
+}
+
+const player1=players[0][0]
+const player2=players[1][0]
+  await currentRoomRef.update({
+                  [`users/${player1}/choice`]: null,
+    [`users/${player2}/choice`]: null,
+       [`users/${player1}/ready`]: false,
+    [`users/${player2}/ready`]: false
              })
               return res.status(200).json({ 
                         message:"ok"

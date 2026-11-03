@@ -63,10 +63,13 @@ background-color:#894949E5}
     
     render()
     const buttonEl=div.querySelector("#button")
-    buttonEl?.addEventListener("click", (e)=>{
-        
-        
-        params.goTo("/lobby")
+    buttonEl?.addEventListener("click", async(e)=>{
+        const {playersReadyToGame,localPlayer, remotePlayer}=state.getState()
+        if(!playersReadyToGame&& !localPlayer.choice && !remotePlayer.choice){
+
+
+            params.goTo("/lobby")
+        }
     })
     
     

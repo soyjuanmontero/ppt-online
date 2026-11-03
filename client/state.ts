@@ -1,4 +1,4 @@
-import {  ref, onValue, push } from "firebase/database";
+import {  ref, onValue, onDisconnect, set } from "firebase/database";
 import { db } from "./db";
 
 
@@ -54,6 +54,7 @@ bothPlayersOnline(localPlayer:User, remotePlayer:User):boolean
 bothPlayersReady(localPlayer:User, remotePlayer:User):boolean
 updateHistory():Promise<object>
 resetChoices() :Promise<object>
+resetRound() :Promise<object>
 }
 
 type Reglas="piedra"| "papel" |"tijera"
@@ -97,9 +98,9 @@ const defaultData: Data = {
       remotePlayer: 0            
     }
 };
-// const initialData: Data = savedState ? JSON.parse(savedState) : defaultData;
+const initialData: Data = savedState ? JSON.parse(savedState) : defaultData;
 const state:State={
-       data:defaultData,
+       data:initialData,
 
     listener:[],
     
@@ -291,13 +292,36 @@ subscribe(callback: () => void): () => void {
 
     },
     listenToTheRoom(){
-      const {roomLongId}=this.getState().room
-      const roomRef=ref(db,`rooms/${roomLongId}`)
+      const {room, localPlayer}=this.getState()
+      const roomRef=ref(db,`rooms/${room.roomLongId}`)
+      const localPlayerRef=ref(db, `rooms/${room.roomLongId}/users/${localPlayer.userId}/online`)
+  
+
+
+
+
+const connectedRef = ref(db, ".info/connected");
+
+const unsubscribeConnection = onValue(connectedRef, async (snapshot) => {
+  if (snapshot.val() !== true) {
+    console.log("Cliente desconectado de Firebase");
+    return;
+  }
+
+  try {
+    await onDisconnect(localPlayerRef).set(false);
+    console.log("Desconexión registrada correctamente");
+
+    await set(localPlayerRef, true);
+    console.log("Jugador conectado a la sala");
+  } catch (error) {
+    console.error("Error al actualizar la presencia:", error);
+  }
+});
 const unsubscribe = onValue(roomRef, (snapshot) => {
 
   const data = snapshot.val();
-  const { users } = data;
-  console.log(data)
+ 
 
 
   
@@ -318,7 +342,10 @@ const unsubscribe = onValue(roomRef, (snapshot) => {
 }, (error) => {
   console.error("Error al leer los datos:", error);
 });
-return unsubscribe
+return () => {
+  unsubscribe();
+  unsubscribeConnection();
+};
 
     },
 
@@ -566,6 +593,44 @@ async resetChoices(){
     return { error}
   }
 
+
+},
+
+ async resetRound(){
+   try {
+              const {room , localPlayer, remotePlayer}=this.getState()
+              
+              const {roomLongId}=room
+                if(!roomLongId ){
+                    return {message:"faltan datos (roomLongId)"}
+                }
+                 if(!localPlayer.choice && !remotePlayer.choice  && !localPlayer.ready && !remotePlayer.ready){
+                    return {message:"No es posible realizar esta peticion "}
+                }
+       
+    const res = await fetch(`${API_BASE_URL}/chatRoom/${roomLongId}/reset-round`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    
+    });
+
+   
+
+    const resultado = await res.json();
+     const {message}=resultado
+      if (!res.ok) {
+          return{message}
+      }
+    
+    return {succes:true, message}
+    
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return { error}
+  }
 
 }
 }

@@ -52,10 +52,10 @@ const startMove = async () => {
     const { localPlayer, remotePlayer } = state.getState();
     
     const isDraw = localPlayer.choice === remotePlayer.choice;
-    console.log("isDraw: "+ isDraw)
+   
 
     if (!isDraw) {
-        await state.updateHistory();
+       
     }
 
     timer = setTimeout( async() => {
@@ -73,8 +73,20 @@ const startMove = async () => {
             }
             }
         
-        } else {
+        } else { 
+            const resHistory:any=await state.updateHistory();
+            if(resHistory.succes){
+  const res:any= await state.resetRound() 
+        if(res.succes){
+
             params.goTo("/result");
+
+            }
+           
+        }
+            
+
+        
         }
     }, 2000);
 };

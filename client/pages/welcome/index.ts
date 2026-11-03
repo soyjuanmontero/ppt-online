@@ -56,7 +56,7 @@ display: flex;
     }
 }  @media (max-height: 630px) {
     .content {
-   padding-top:59px;
+   padding-top:39px;
        
     }
 }

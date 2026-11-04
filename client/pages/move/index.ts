@@ -76,12 +76,15 @@ const startMove = async () => {
         } else { 
             const resHistory:any=await state.updateHistory();
             if(resHistory.succes){
+             
   const res:any= await state.resetRound() 
         if(res.succes){
 
             params.goTo("/result");
 
             }
+             
+            
            
         }
             

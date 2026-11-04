@@ -80,7 +80,7 @@ contentParagraphEl.innerHTML=`
 
 <p>
           
-Esperando a que Paula presione <br>¡Jugar!...
+Esperando a que ${remotePlayer.userName} presione <br>¡Jugar!...
 </p>
 `
 containerButtonEl.classList.add("none")

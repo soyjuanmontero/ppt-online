@@ -506,13 +506,14 @@ const players=Object.entries(users as Record<string, any>)
 console.log(players[0])
 
 const verifyData=players.every(([userId,data ])=>{
-    return data.choice!==undefined && data.ready===true && data.online===true
+    return data.choice!==undefined && data.ready===true 
 
 })
 console.log(verifyData)
 
 if(!verifyData){
-     return res.status(400).json({ message: "error no se puede realizar esta operacion" });
+     return res.status(200).json({succes:true,
+         message: "La ronda ya había sido reiniciada" });
 }
 
 const player1=players[0][0]
